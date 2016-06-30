@@ -29,7 +29,7 @@ public class CheatActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cheat);
-        correctAnswer = getIntent().getBooleanExtra(TrueFalseActivity.ANSWER_KEY, false);
+        correctAnswer = getIntent().getBooleanExtra(TrueFalseFragment.ANSWER_KEY, false);
         initComponents();
         setAnswerShownResult(answerWasShown);
     }

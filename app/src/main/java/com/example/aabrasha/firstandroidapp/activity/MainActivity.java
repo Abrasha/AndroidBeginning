@@ -1,20 +1,20 @@
 package com.example.aabrasha.firstandroidapp.activity;
 
-import android.content.Intent;
-import android.os.Build;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.example.aabrasha.firstandroidapp.R;
+import com.example.aabrasha.firstandroidapp.activity.crime.CrimeFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
-    TextView tvHello;
+    FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,12 +23,18 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         toolbar.setTitle("MainActivity Toolbar");
-
-        tvHello = (TextView) findViewById(R.id.textView);
-        tvHello.setText("Build.VERSION.SDK_INT: " + Build.VERSION.SDK_INT +
-        "\nBuild.VERSION.CODENAME: " + Build.VERSION.CODENAME);
-
         setSupportActionBar(toolbar);
+
+        fragmentManager = getFragmentManager();
+
+        Fragment mainContentFragment = fragmentManager.findFragmentById(R.id.mainContentContainer);
+        if (mainContentFragment == null) {
+            fragmentManager.beginTransaction()
+                    .add(R.id.mainContentContainer, new HelloFragment())
+                    .commit();
+        }
+
+
     }
 
     @Override
@@ -42,18 +48,23 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
 
+
         switch (itemId) {
             case R.id.menu_basic_item:
-                Intent mainIntent = new Intent(this, MainActivity.class);
-                startActivity(mainIntent);
+
+                fragmentManager.beginTransaction()
+                        .replace(R.id.mainContentContainer, new HelloFragment())
+                        .commit();
                 break;
             case R.id.menu_true_false__item:
-                Intent trueFalseIntent = new Intent(this, TrueFalseActivity.class);
-                startActivity(trueFalseIntent);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.mainContentContainer, new TrueFalseFragment())
+                        .commit();
                 break;
             case R.id.menu_crime_fragment:
-                Intent crimeIntent = new Intent(this, CrimeActivity.class);
-                startActivity(crimeIntent);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.mainContentContainer, new CrimeFragment())
+                        .commit();
                 break;
         }
 
