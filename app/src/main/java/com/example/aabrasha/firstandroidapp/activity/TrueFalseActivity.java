@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,14 +18,19 @@ import com.example.aabrasha.firstandroidapp.model.TrueFalse;
 
 public class TrueFalseActivity extends AppCompatActivity {
 
-    Toolbar toolbar;
-    Button btnTrue;
-    Button btnFalse;
-    Button btnNext;
-    TextView tvQuestion;
-    TextView tvCorrectAnswers;
+    private static final String TAG = "TrueFalse";
+    private static final String SAVED_INDEX = "q_index";
+
+    private Toolbar toolbar;
+    private Button btnTrue;
+    private Button btnFalse;
+    private ImageButton btnNext;
+    private ImageButton btnPrevious;
+    private TextView tvQuestion;
+    private TextView tvCorrectAnswers;
 
     private int correctAnswers = 0;
+    private int currentQuestion = 0;
 
     private TrueFalse[] questions = {
             new TrueFalse(R.string.question_oceans, true),
@@ -33,21 +40,68 @@ public class TrueFalseActivity extends AppCompatActivity {
             new TrueFalse(R.string.question_asia, true)
     };
 
-    private int currentQuestion = 0;
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "Saved index: " + currentQuestion);
+        outState.putInt(SAVED_INDEX, currentQuestion);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (savedInstanceState != null){
+            currentQuestion = savedInstanceState.getInt(SAVED_INDEX, 0);
+            Log.d(TAG, "Loaded index: " + currentQuestion);
+        }
+
+        Log.d(TAG, "Starting creating activity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_true_false);
         setSupportActionBar(toolbar);
 
         initComponents();
-        updateQuestion();
-
+        loadQuestion(currentQuestion);
+        Log.d(TAG, "Finished creating activity");
     }
 
-    private void updateQuestion() {
+    private void loadQuestion(int index) {
+        int question = questions[index].getQuestion();
+        tvQuestion.setText(question);
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "Starting starting activity");
+        super.onStart();
+
+        Log.d(TAG, "Finished starting activity");
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "Starting pausing activity");
+        super.onPause();
+        Log.d(TAG, "Finished pausing activity");
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "Starting destroying activity");
+        super.onDestroy();
+        Log.d(TAG, "Finishing destroying activity");
+    }
+
+    private void nextQuestion() {
         currentQuestion = ++currentQuestion % questions.length;
+        int question = questions[currentQuestion].getQuestion();
+        tvQuestion.setText(question);
+    }
+
+    private void prevQuestion() {
+        currentQuestion = --currentQuestion;
+        if (currentQuestion < 0)
+            currentQuestion = questions.length - 1;
         int question = questions[currentQuestion].getQuestion();
         tvQuestion.setText(question);
     }
@@ -61,7 +115,7 @@ public class TrueFalseActivity extends AppCompatActivity {
         } else {
             Toast.makeText(TrueFalseActivity.this, R.string.incorrect_toast, Toast.LENGTH_SHORT).show();
         }
-        updateQuestion();
+        nextQuestion();
     }
 
     private void initComponents() {
@@ -84,11 +138,18 @@ public class TrueFalseActivity extends AppCompatActivity {
                 Toast.makeText(TrueFalseActivity.this, "False clicked", Toast.LENGTH_SHORT).show();
             }
         });
-        btnNext = (Button) findViewById(R.id.btnNext);
+        btnNext = (ImageButton) findViewById(R.id.btnNext);
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateQuestion();
+                nextQuestion();
+            }
+        });
+        btnPrevious = (ImageButton) findViewById(R.id.btnPrevious);
+        btnPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                prevQuestion();
             }
         });
     }
