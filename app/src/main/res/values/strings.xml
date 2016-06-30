@@ -24,5 +24,7 @@
     <string name="title_activity_cheat">CheatActivity</string>
     <string name="do_you_really_want_to_find_out_answer">Do you really want to find out answer?</string>
     <string name="do_it">Do it!</string>
+    <string name="crime_example">Crime Example</string>
+    <string name="crime_title_hint">crime hint</string>
 
 </resources>

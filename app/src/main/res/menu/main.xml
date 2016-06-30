@@ -9,4 +9,8 @@
         android:title="@string/menu_true_false"
         android:orderInCategory="100"
         app:showAsAction="never"/>
+    <item android:id="@+id/menu_crime_fragment"
+        android:title="@string/crime_example"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"/>
 </menu>

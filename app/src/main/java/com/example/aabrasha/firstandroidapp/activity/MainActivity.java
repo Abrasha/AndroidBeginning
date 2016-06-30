@@ -51,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent trueFalseIntent = new Intent(this, TrueFalseActivity.class);
                 startActivity(trueFalseIntent);
                 break;
+            case R.id.menu_crime_fragment:
+                Intent crimeIntent = new Intent(this, CrimeActivity.class);
+                startActivity(crimeIntent);
+                break;
         }
 
         return true;
