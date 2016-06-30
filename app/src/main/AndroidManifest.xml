@@ -21,7 +21,7 @@
         <activity
             android:name=".activity.TrueFalseActivity"
             android:label="@string/title_activity_true_false"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
