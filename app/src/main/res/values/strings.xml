@@ -21,5 +21,8 @@
 
     <string name="correct_toast">Yes! You\'re right!</string>
     <string name="incorrect_toast">No… Try another time…</string>
+    <string name="title_activity_cheat">CheatActivity</string>
+    <string name="do_you_really_want_to_find_out_answer">Do you really want to find out answer?</string>
+    <string name="do_it">Do it!</string>
 
 </resources>

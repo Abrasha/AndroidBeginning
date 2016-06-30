@@ -1,6 +1,7 @@
 package com.example.aabrasha.firstandroidapp.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,16 +19,24 @@ import com.example.aabrasha.firstandroidapp.model.TrueFalse;
 
 public class TrueFalseActivity extends AppCompatActivity {
 
+    public static final String ANSWER_KEY = "com.example.aabrasha.firstandroidapp.answer";
+    public static final String USER_CHEATED_KEY = "com.example.aabrasha.firstandroidapp.user_cheated";
+
+    private static final int CHEAT_REQUEST_CODE = 0;
+
     private static final String TAG = "TrueFalse";
     private static final String SAVED_INDEX = "q_index";
 
     private Toolbar toolbar;
     private Button btnTrue;
     private Button btnFalse;
+    private Button btnCheatAnswer;
     private ImageButton btnNext;
     private ImageButton btnPrevious;
     private TextView tvQuestion;
     private TextView tvCorrectAnswers;
+
+    private boolean userCheatedOnCurrentQuestion = false;
 
     private int correctAnswers = 0;
     private int currentQuestion = 0;
@@ -45,20 +54,21 @@ public class TrueFalseActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         Log.d(TAG, "Saved index: " + currentQuestion);
         outState.putInt(SAVED_INDEX, currentQuestion);
+        outState.putBoolean(USER_CHEATED_KEY, userCheatedOnCurrentQuestion);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        if (savedInstanceState != null){
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
             currentQuestion = savedInstanceState.getInt(SAVED_INDEX, 0);
+            userCheatedOnCurrentQuestion = savedInstanceState.getBoolean(USER_CHEATED_KEY, false);
             Log.d(TAG, "Loaded index: " + currentQuestion);
         }
 
         Log.d(TAG, "Starting creating activity");
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_true_false);
-        setSupportActionBar(toolbar);
 
         initComponents();
         loadQuestion(currentQuestion);
@@ -74,7 +84,6 @@ public class TrueFalseActivity extends AppCompatActivity {
     protected void onStart() {
         Log.d(TAG, "Starting starting activity");
         super.onStart();
-
         Log.d(TAG, "Finished starting activity");
     }
 
@@ -94,23 +103,38 @@ public class TrueFalseActivity extends AppCompatActivity {
 
     private void nextQuestion() {
         currentQuestion = ++currentQuestion % questions.length;
-        int question = questions[currentQuestion].getQuestion();
+        int question = getCurrentQuestionId();
         tvQuestion.setText(question);
+        userCheatedOnCurrentQuestion = false;
     }
 
     private void prevQuestion() {
-        currentQuestion = --currentQuestion;
-        if (currentQuestion < 0)
+        if (--currentQuestion < 0)
             currentQuestion = questions.length - 1;
-        int question = questions[currentQuestion].getQuestion();
+        int question = getCurrentQuestionId();
         tvQuestion.setText(question);
+        userCheatedOnCurrentQuestion = false;
+    }
+
+    private int getCurrentQuestionId() {
+        return questions[currentQuestion].getQuestion();
+    }
+
+    private TrueFalse getCurrentQuestion() {
+        return questions[currentQuestion];
     }
 
     private void checkUserAnswer(boolean userPressedTrue) {
         boolean correctAnswer = questions[currentQuestion].isTrueQuestion();
         if (correctAnswer == userPressedTrue) {
             correctAnswers++;
-            tvCorrectAnswers.setText("Correct answers: " + correctAnswers);
+            if (userCheatedOnCurrentQuestion) {
+                tvCorrectAnswers.setTextColor(Color.RED);
+                tvCorrectAnswers.setText("You\'ve cheated! Correct answers: " + correctAnswers);
+            } else {
+                tvCorrectAnswers.setTextColor(Color.BLACK);
+                tvCorrectAnswers.setText("Correct answers: " + correctAnswers);
+            }
             Toast.makeText(TrueFalseActivity.this, R.string.correct_toast, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(TrueFalseActivity.this, R.string.incorrect_toast, Toast.LENGTH_SHORT).show();
@@ -121,6 +145,7 @@ public class TrueFalseActivity extends AppCompatActivity {
     private void initComponents() {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_true_false);
+        setSupportActionBar(toolbar);
         tvQuestion = (TextView) findViewById(R.id.tv_question_text);
         tvCorrectAnswers = (TextView) findViewById(R.id.tv_correct_answers);
         btnTrue = (Button) findViewById(R.id.btnTrue);
@@ -135,7 +160,6 @@ public class TrueFalseActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 checkUserAnswer(false);
-                Toast.makeText(TrueFalseActivity.this, "False clicked", Toast.LENGTH_SHORT).show();
             }
         });
         btnNext = (ImageButton) findViewById(R.id.btnNext);
@@ -152,6 +176,16 @@ public class TrueFalseActivity extends AppCompatActivity {
                 prevQuestion();
             }
         });
+
+        btnCheatAnswer = (Button) findViewById(R.id.btn_cheat_answer);
+        btnCheatAnswer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent cheatIntent = new Intent(TrueFalseActivity.this, CheatActivity.class);
+                cheatIntent.putExtra(ANSWER_KEY, getCurrentQuestion().isTrueQuestion());
+                startActivityForResult(cheatIntent, CHEAT_REQUEST_CODE);
+            }
+        });
     }
 
 
@@ -159,6 +193,14 @@ public class TrueFalseActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data == null)
+            return;
+
+        userCheatedOnCurrentQuestion = data.getBooleanExtra(CheatActivity.ANSWER_SHOWN, false);
     }
 
     @Override
@@ -178,4 +220,6 @@ public class TrueFalseActivity extends AppCompatActivity {
 
         return true;
     }
+
+
 }

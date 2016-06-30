@@ -21,7 +21,11 @@
         <activity
             android:name=".activity.TrueFalseActivity"
             android:label="@string/title_activity_true_false"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.CheatActivity"
+            android:label="@string/title_activity_cheat"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
