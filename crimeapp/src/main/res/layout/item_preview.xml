@@ -5,14 +5,14 @@
     android:gravity="center"
     android:background="#e1a2a2">
 
-    <TextView
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="tvPreviewPersonName"
         android:id="@+id/tvPreviewPersonName" />
 
-    <TextView
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"

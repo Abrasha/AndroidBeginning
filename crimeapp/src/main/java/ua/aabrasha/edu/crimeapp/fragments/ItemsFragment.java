@@ -1,7 +1,6 @@
 package ua.aabrasha.edu.crimeapp.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,7 @@ public class ItemsFragment extends android.support.v4.app.ListFragment {
 
         FragmentManager fm = getActivity().getSupportFragmentManager();
 
-        Fragment previewFragment = new PreviewFragment();
+        PreviewFragment previewFragment = new PreviewFragment();
 
         Bundle args = new Bundle();
         args.putSerializable(PreviewFragment.PERSON_ID_KEY, ((Person) getListAdapter().getItem(position)).getId());
@@ -44,6 +43,11 @@ public class ItemsFragment extends android.support.v4.app.ListFragment {
                 .commit();
 
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     private class PersonListItemAdapter extends ArrayAdapter<Person> {
@@ -62,6 +66,7 @@ public class ItemsFragment extends android.support.v4.app.ListFragment {
 
             Person p = getItem(position);
             TextView tvPersonGender = (TextView) convertView.findViewById(R.id.tvPersonGender);
+
             TextView tvPersonName = (TextView) convertView.findViewById(R.id.tvPersonName);
             TextView tvPersonAge = (TextView) convertView.findViewById(R.id.tvPersonAge);
             TextView tvPersonId = (TextView) convertView.findViewById(R.id.tvPersonId);

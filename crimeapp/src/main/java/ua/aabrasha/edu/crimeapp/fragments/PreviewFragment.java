@@ -2,9 +2,12 @@ package ua.aabrasha.edu.crimeapp.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.UUID;
@@ -41,11 +44,43 @@ public class PreviewFragment extends android.support.v4.app.Fragment {
         }
         View v = inflater.inflate(R.layout.item_preview, container, false);
 
-        TextView tvPersonName = (TextView) v.findViewById(R.id.tvPreviewPersonName);
+        EditText tvPersonName = (EditText) v.findViewById(R.id.tvPreviewPersonName);
+        tvPersonName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                currentPerson.setName(String.valueOf(charSequence));
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
         tvPersonName.setText(currentPerson.getName());
 
-        TextView tvPreviewPersonAge = (TextView) v.findViewById(R.id.tvPreviewPersonAge);
+        EditText tvPreviewPersonAge = (EditText) v.findViewById(R.id.tvPreviewPersonAge);
         tvPreviewPersonAge.setText(String.valueOf(currentPerson.getAge()));
+        tvPreviewPersonAge.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                currentPerson.setAge(Integer.valueOf(String.valueOf(charSequence)));
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         TextView tvPreviewPersonId = (TextView) v.findViewById(R.id.tvPreviewPersonId);
         tvPreviewPersonId.setText(currentPerson.getId().toString());
