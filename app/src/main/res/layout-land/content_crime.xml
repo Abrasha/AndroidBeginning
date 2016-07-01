@@ -4,4 +4,8 @@
     android:layout_height="match_parent"
     android:id="@+id/crimeFragmentContainer">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Hello there"/>
 </FrameLayout>

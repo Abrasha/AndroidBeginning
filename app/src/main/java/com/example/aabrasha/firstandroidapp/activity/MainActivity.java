@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         Fragment mainContentFragment = fragmentManager.findFragmentById(R.id.mainContentContainer);
         if (mainContentFragment == null) {
             fragmentManager.beginTransaction()
-                    .add(R.id.mainContentContainer, new HelloFragment())
+                    .add(R.id.mainContentContainer, new CrimeFragment())
                     .commit();
         }
 
