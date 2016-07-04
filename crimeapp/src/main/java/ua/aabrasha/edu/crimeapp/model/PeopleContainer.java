@@ -29,6 +29,10 @@ public class PeopleContainer {
         return people;
     }
 
+    public static void remove(Person p) {
+        people.remove(p);
+    }
+
     public static Person getWithUUID(UUID id) {
         for (Person person : people) {
             if (person.getId().equals(id))
