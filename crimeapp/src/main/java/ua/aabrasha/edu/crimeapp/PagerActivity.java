@@ -1,5 +1,6 @@
 package ua.aabrasha.edu.crimeapp;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import ua.aabrasha.edu.crimeapp.model.Person;
 public class PagerActivity extends AppCompatActivity {
 
     private static final String TAG = PagerActivity.class.getSimpleName();
+    private static final String LAST_ELEMENT_KEY = "LAST_ELEM";
 
     List<Person> people;
     ViewPager viewPager;
@@ -27,6 +29,7 @@ public class PagerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         people = PeopleContainer.getPeople();
         viewPager = new ViewPager(this);
@@ -48,24 +51,50 @@ public class PagerActivity extends AppCompatActivity {
             }
         });
 
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                Log.d(TAG, String.format("onPageScrolled, pos=%d, posOffset=%f, posOffPixel=%d", position, positionOffset, positionOffsetPixels));
-            }
+//        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//                Log.d(TAG, String.format("onPageScrolled, pos=%d, posOffset=%f, posOffPixel=%d", position, positionOffset, positionOffsetPixels));
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//                Log.d(TAG, String.format("onPageScrolled, pos=%d", position));
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//                Log.d(TAG, String.format("onPageScrollStateChanged, pos=%d", state));
+//            }
+//        });
 
-            @Override
-            public void onPageSelected(int position) {
-                Log.d(TAG, String.format("onPageScrolled, pos=%d", position));
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                Log.d(TAG, String.format("onPageScrollStateChanged, pos=%d", state));
-            }
-        });
 
         setContentView(viewPager);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        int lastElement = loadLastElement();
+        viewPager.setCurrentItem(lastElement);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        int currentItem = viewPager.getCurrentItem();
+        Log.d(TAG, "Wrote last element index: " + currentItem);
+        preferences.edit().putInt(LAST_ELEMENT_KEY, currentItem).apply();
+
+    }
+
+    private int loadLastElement() {
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        int lastSeenElement = preferences.getInt(LAST_ELEMENT_KEY, 0);
+        Log.d(TAG, "Read last element index: " + lastSeenElement);
+        return lastSeenElement;
     }
 }
