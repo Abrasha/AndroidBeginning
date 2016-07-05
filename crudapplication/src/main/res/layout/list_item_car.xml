@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Car name"
+            android:id="@+id/tvCarName"
+            android:layout_alignParentStart="true" />
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Car id"
+            android:id="@+id/tvCarId"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true" />
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="car year"
+            android:id="@+id/tvCarYear"
+            android:layout_below="@+id/tvCarName"
+            android:layout_alignParentStart="true" />
+</RelativeLayout>

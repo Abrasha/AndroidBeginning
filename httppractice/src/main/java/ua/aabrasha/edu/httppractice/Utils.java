@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -53,16 +54,20 @@ public class Utils {
         try {
             InputStream is = (InputStream) new URL(imageUrl).getContent();
             Drawable d = Drawable.createFromStream(is, "src name");
+            is.close();
             return d;
         } catch (Exception e) {
             return null;
         }
     }
 
-    static class NetworkContentLoader extends AsyncTask<String, Void, List<Drawable>> {
+    static class NetworkContentLoader extends AsyncTask<String, Integer, List<Drawable>> {
+
 
         @Override
         protected List<Drawable> doInBackground(String... strings) {
+
+
             try {
                 Log.d(TAG, "loading in .... " + Thread.currentThread().getName());
                 String vkUrl = strings[0];
@@ -74,6 +79,7 @@ public class Utils {
                 JSONArray response = jsonObject.getJSONArray("response");
                 for (int i = 0; i < response.length(); i++) {
 
+                    publishProgress(i);
                     String imgUrl = response.getJSONObject(i).getString("src");
                     result.add(loadImage(imgUrl));
 
@@ -82,6 +88,13 @@ public class Utils {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+        }
+
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            Log.d(TAG, Arrays.toString(values));
+            super.onProgressUpdate(values);
         }
     }
 

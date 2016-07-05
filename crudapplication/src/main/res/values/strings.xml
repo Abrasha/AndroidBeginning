@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">CrudApplication</string>
+    <string name="menu_add_new_one">Add new one</string>
+    <string name="menu_item_remove">Delete</string>
+</resources>
