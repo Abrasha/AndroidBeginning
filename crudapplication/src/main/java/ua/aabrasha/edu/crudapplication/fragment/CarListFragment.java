@@ -1,6 +1,7 @@
 package ua.aabrasha.edu.crudapplication.fragment;
 
 import android.app.ListFragment;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
@@ -9,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import ua.aabrasha.edu.crudapplication.R;
+import ua.aabrasha.edu.crudapplication.database.CarCursor;
+import ua.aabrasha.edu.crudapplication.database.CarCursorAdapter;
 import ua.aabrasha.edu.crudapplication.database.CarDatabaseHelper;
 import ua.aabrasha.edu.crudapplication.model.Car;
 import ua.aabrasha.edu.crudapplication.model.CarManager;
@@ -23,13 +26,18 @@ import static ua.aabrasha.edu.crudapplication.database.CarDatabaseHelper.CAR_TAB
  */
 public class CarListFragment extends ListFragment {
 
-    CarListAdapter adapter;
-    CarDatabaseHelper carDB = new CarDatabaseHelper(getActivity());
+    CarCursorAdapter adapter;
+    CarDatabaseHelper carDB;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        carDB = new CarDatabaseHelper(getActivity());
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        adapter = new CarListAdapter(CarManager.getCarManager(getActivity()).getCars());
+        adapter = new CarCursorAdapter(getActivity(), carDB.getCarsCursor());
         setListAdapter(adapter);
         setHasOptionsMenu(true);
 
@@ -63,12 +71,13 @@ public class CarListFragment extends ListFragment {
 
                 switch (menuItem.getItemId()) {
                     case R.id.menu_item_delete_car:
-                        CarListAdapter adapter = (CarListAdapter) getListAdapter();
+                        CarCursorAdapter adapter = (CarCursorAdapter) getListAdapter();
                         for (int i = 0; i < adapter.getCount(); i++) {
                             if (getListView().isItemChecked(i)) {
-                                final Car checkedCar = adapter.getItem(i);
+                                Car checkedCar = (Car) adapter.getItem(i);
+                                SQLiteDatabase writableDatabase = carDB.getWritableDatabase();
+                                int deleted = writableDatabase.delete(CAR_TABLE_NAME, CAR_ID_COLUMN_NAME + "=" + checkedCar.getId(), null);
                                 CarManager.getCarManager(getActivity()).remove(checkedCar);
-                                final int deleted = carDB.getWritableDatabase().delete(CAR_TABLE_NAME, CAR_ID_COLUMN_NAME + "=" + checkedCar.getId(), null);
                                 Log.d(getClass().getSimpleName(), "deleted rows: " + deleted);
                             }
                         }
@@ -112,9 +121,9 @@ public class CarListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        final CarListAdapter adapter = (CarListAdapter) getListAdapter();
-        final Car selectedItem = adapter.getItem(position);
-        final CarPreviewFragment fragment = CarPreviewFragment.newInstance(selectedItem.getId(), adapter);
+        final CarCursorAdapter adapter = (CarCursorAdapter) getListAdapter();
+        final CarCursor selectedItem = (CarCursor) adapter.getItem(position);
+        final CarPreviewFragment fragment = CarPreviewFragment.newInstance(selectedItem.getCar().getId(), adapter);
         getFragmentManager().beginTransaction()
                 .replace(R.id.previewFragment, fragment)
                 .commit();
@@ -131,7 +140,7 @@ public class CarListFragment extends ListFragment {
 
         switch (item.getItemId()) {
             case R.id.menu_item_new_car:
-                final CarListAdapter adapter = (CarListAdapter) getListAdapter();
+                final CarCursorAdapter adapter = (CarCursorAdapter) getListAdapter();
                 final CarPreviewFragment fragment = new CarPreviewFragment();
                 fragment.setAdapter(adapter);
                 getFragmentManager().beginTransaction()

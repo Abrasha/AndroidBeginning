@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import ua.aabrasha.edu.crudapplication.model.Car;
 
 import java.util.ArrayList;
@@ -15,11 +16,13 @@ import java.util.List;
  */
 public class CarDatabaseHelper extends SQLiteOpenHelper {
 
+    private static final String TAG = CarDatabaseHelper.class.getSimpleName();
+
     private static final String DB_NAME = "car.sqlite";
-    private static final int VERSION = 2;
+    private static final int VERSION = 4;
 
     public static final String CAR_TABLE_NAME = "my_cars";
-    public static final String CAR_ID_COLUMN_NAME = "id";
+    public static final String CAR_ID_COLUMN_NAME = "_id";
     public static final String CAR_NAME_COLUMN_NAME = "name";
     public static final String CAR_YEAR_COLUMN_NAME = "year";
 
@@ -31,17 +34,18 @@ public class CarDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + CAR_TABLE_NAME +
-                " ( id integer primary key autoincrement," +
+                " ( _id integer primary key autoincrement," +
                 " name varchar(60) NOT NULL," +
                 " year integer NOT NULL" +
                 ")");
+        Log.d(TAG, "Db created: v" + VERSION);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         String sql = "DROP TABLE IF EXISTS " + CAR_TABLE_NAME;
         db.execSQL(sql);
-
+        Log.d(TAG, "Db upgraded to v" + VERSION);
         onCreate(db);
     }
 
@@ -65,6 +69,11 @@ public class CarDatabaseHelper extends SQLiteOpenHelper {
             }
         }
         return result;
+    }
+
+    public CarCursor getCarsCursor() {
+        Cursor c = getReadableDatabase().query(CAR_TABLE_NAME, null, null, null, null, null, null);
+        return new CarCursor(c);
     }
 
     private Car parseCursor(Cursor c) {

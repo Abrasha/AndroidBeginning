@@ -8,11 +8,11 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import ua.aabrasha.edu.crudapplication.R;
+import ua.aabrasha.edu.crudapplication.database.CarCursorAdapter;
 import ua.aabrasha.edu.crudapplication.model.Car;
 import ua.aabrasha.edu.crudapplication.model.CarManager;
 
@@ -24,14 +24,23 @@ public class CarPreviewFragment extends Fragment {
     private static final String KEY_CAR_ID = "key.car.id";
 
     // nvm
-    private BaseAdapter adapter;
+    private CarCursorAdapter adapter;
 
-    private CarManager carManager = CarManager.getCarManager(getActivity());
+    private CarManager carManager;
+
+
     private Car currentCar = null;
     private boolean isAddingNew = false;
 
-    public void setAdapter(BaseAdapter adapter) {
+    public void setAdapter(CarCursorAdapter adapter) {
         this.adapter = adapter;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        carManager = CarManager.getCarManager(getActivity());
+
     }
 
     @Nullable
@@ -61,7 +70,8 @@ public class CarPreviewFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     carManager.addNewCar(currentCar);
-                    adapter.notifyDataSetChanged();
+                    adapter = new CarCursorAdapter(getActivity(), carManager.getCarsCursor());
+                    setAdapter(adapter);
                     view.setVisibility(View.GONE);
                 }
             });
@@ -114,7 +124,7 @@ public class CarPreviewFragment extends Fragment {
         return previewView;
     }
 
-    public static CarPreviewFragment newInstance(long carId, BaseAdapter adapter) {
+    public static CarPreviewFragment newInstance(long carId, CarCursorAdapter adapter) {
         Bundle args = new Bundle();
         args.putLong(KEY_CAR_ID, carId);
         CarPreviewFragment result = new CarPreviewFragment();

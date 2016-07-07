@@ -14,10 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,8 +29,8 @@ public class HttpFragment extends Fragment {
     private static final String TAG = HttpFragment.class.getSimpleName();
 
     private List<Drawable> images = new ArrayList<>();
+    private int numberOfImages;
 
-    EditText etUrl;
     GridView gridImages;
     ImageAdapter imageAdapter;
     ProgressBar progressBar;
@@ -48,19 +49,15 @@ public class HttpFragment extends Fragment {
 
         gridImages = (GridView) view.findViewById(R.id.gridImages);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-        progressBar.setMax(100);
-        progressBar.setProgress(0);
+        progressBar.setVisibility(View.INVISIBLE);
 
         imageAdapter = new ImageAdapter();
-
-        etUrl = (EditText) view.findViewById(R.id.etUrl);
 
         Button btnClear = (Button) view.findViewById(R.id.btnClear);
         btnClear.setEnabled(true); // TODO
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                etUrl.setText("");
                 images.clear();
                 imageAdapter.notifyDataSetChanged();
             }
@@ -70,7 +67,9 @@ public class HttpFragment extends Fragment {
         btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = "http://api.vk.com/method/photos.get?owner_id=85201518&album_id=wall"; // &count=20
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setIndeterminate(true);
+                String url = "http://api.vk.com/method/photos.get?owner_id=85201518&album_id=wall&count=25"; // &count=20
                 loadImages(url);
             }
         });
@@ -82,7 +81,7 @@ public class HttpFragment extends Fragment {
         ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if (connectionIsPresent(connManager.getActiveNetworkInfo())) {
-            images = Collections.emptyList();
+            images = new ArrayList<>();
             try {
                 new AsyncImageLoader().execute(url);
                 Log.d(TAG, "setting in in .... " + Thread.currentThread().getName());
@@ -95,9 +94,6 @@ public class HttpFragment extends Fragment {
         }
     }
 
-    private boolean connectionIsPresent(NetworkInfo info) {
-        return info != null && info.isConnected();
-    }
 
     class ImageAdapter extends BaseAdapter {
 
@@ -143,14 +139,20 @@ public class HttpFragment extends Fragment {
 
                 JSONObject jsonObject = new JSONObject(content);
                 JSONArray response = jsonObject.getJSONArray("response");
-                for (int i = 0; i < response.length(); i++) {
+                List<String> imgUrls = new ArrayList<>();
 
-                    publishProgress(i);
-                    String imgUrl = response.getJSONObject(i).getString("src");
+                numberOfImages = response.length();
+                for (int i = 0; i < numberOfImages; i++) {
+                    final String imgUrl = extractImageSrc(response.getJSONObject(i));
+                    imgUrls.add(imgUrl);
+                }
+                for (int i = 0; i < numberOfImages; i++) {
+                    String imgUrl = imgUrls.get(i);
                     images.add(Utils.loadImage(imgUrl));
+                    publishProgress(i + 1);
                 }
                 return images;
-            } catch (Exception e) {
+            } catch (JSONException | IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -160,8 +162,25 @@ public class HttpFragment extends Fragment {
             int value = values[0];
             imageAdapter.notifyDataSetChanged();
             Log.d(TAG, "PROGRESS: " + value);
+            progressBar.setMax(numberOfImages);
+            progressBar.setIndeterminate(false);
             progressBar.setProgress(value);
         }
+
+        @Override
+        protected void onPostExecute(List<Drawable> drawables) {
+            super.onPostExecute(drawables);
+            progressBar.setVisibility(View.GONE);
+        }
+
+        private String extractImageSrc(JSONObject obj) throws JSONException {
+            return obj.getString("src");
+        }
+    }
+
+
+    private boolean connectionIsPresent(NetworkInfo info) {
+        return info != null && info.isConnected();
     }
 
 }

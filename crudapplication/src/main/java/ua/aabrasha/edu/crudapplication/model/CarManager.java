@@ -1,6 +1,7 @@
 package ua.aabrasha.edu.crudapplication.model;
 
 import android.content.Context;
+import ua.aabrasha.edu.crudapplication.database.CarCursor;
 import ua.aabrasha.edu.crudapplication.database.CarDatabaseHelper;
 
 import java.util.List;
@@ -51,6 +52,10 @@ public class CarManager {
     public boolean addNewCar(Car car) {
         carDB.insertCar(car);
         return cars.add(car);
+    }
+
+    public CarCursor getCarsCursor() {
+        return carDB.getCarsCursor();
     }
 
     public void remove(Car item) {

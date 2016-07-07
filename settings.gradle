@@ -1,1 +1,1 @@
-include ':app', ':crimeapp', ':launcher', ':httppractice', ':httppractice', ':crudapplication'
+include ':app', ':crimeapp', ':launcher', ':httppractice', ':httppractice', ':crudapplication', ':services'

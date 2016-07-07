@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        package="ua.aabrasha.edu.services">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
+
+        <receiver android:name=".services.NetworkStateChangedReceiver"
+                android:label="NetworkStateChangedReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="ua.aabrasha.edu.services.services.NetworkStateChangedReceiver.SHOW_NETWORK_NOTIFICATION" />
+                <action android:name="ACTION_SHOW_NETWORK_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".services.ScreenUnlockBroadcastReceiver"
+                android:label="ScreenUnlockBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".activities.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name=".services.TimeService" />
+    </application>
+
+</manifest>
