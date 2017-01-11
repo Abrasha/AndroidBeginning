@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Consumer App</string>
+    <string name="title_activity_remote_bound">RemoteBoundActivity</string>
+</resources>

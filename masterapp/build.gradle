@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.2"
 
     defaultConfig {
-        applicationId "ua.aabrasha.edu.crudapplication"
+        applicationId "aabrasha.edu.masterapplication"
         minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
@@ -17,11 +17,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.google.guava:guava:19.0'
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
 }

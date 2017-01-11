@@ -1,1 +1,2 @@
 include ':app', ':crimeapp', ':launcher', ':httppractice', ':httppractice', ':crudapplication', ':services'
+include ':masterapp', 'consumerapp'
